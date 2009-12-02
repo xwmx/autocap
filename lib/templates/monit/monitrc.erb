@@ -1,0 +1,72 @@
+###############################################################################
+## Monit control file
+###############################################################################
+##
+## Comments begin with a '#' and extend through the end of the line. Keywords
+## are case insensitive. All path's MUST BE FULLY QUALIFIED, starting with '/'.
+##
+## Bellow is the example of some frequently used statements. For information
+## about the control file, a complete list of statements and options please
+## have a look in the monit manual.
+##
+##
+###############################################################################
+## Global section
+###############################################################################
+##
+## Start monit in background (run as daemon) and check the services at 2-minute
+## intervals.
+
+set daemon 60
+
+## Set syslog logging with the 'daemon' facility. If the FACILITY option is
+## omited, monit will use 'user' facility by default. You can specify the
+## path to the file for monit native logging.
+
+set logfile syslog facility log_daemon
+
+
+
+#
+#
+## Set list of mailservers for alert delivery. Multiple servers may be
+## specified using comma separator. By default monit uses port 25 - it is
+## possible to override it with the PORT option.
+#
+# set mailserver mail.bar.baz,               # primary mailserver
+#                backup.bar.baz port 10025,  # backup mailserver on port 10025
+#                localhost                   # fallback relay
+
+set mailserver smtp.gmail.com port 587 username "<%= monitrc_mail_user_email %>" password "<%= monitrc_mail_password %>" using tlsv1
+
+
+set mail-format { from: <%= monitrc_mail_user_email %> }
+
+set alert <%= monitrc_alert_email_recipient %>
+
+set httpd port 2812 and use the address 127.0.0.1
+    #SSL ENABLE
+    #PEMFILE /var/certs/monit.pem
+    allow <%= monitrc_web_user %>:<%= monitrc_web_password %>
+
+check process sshd with pidfile /var/run/sshd.pid
+  start program  "/etc/init.d/ssh start"
+  stop program  "/etc/init.d/ssh stop"
+  if failed port 8888 protocol ssh then restart
+  if 5 restarts within 5 cycles then timeout
+
+check process mysql with pidfile /var/run/mysqld/mysqld.pid
+  group database
+  start program = "/etc/init.d/mysql start"
+  stop program = "/etc/init.d/mysql stop"
+  if failed host 127.0.0.1 port 3306 then restart
+  if 5 restarts within 5 cycles then timeout
+
+###############################################################################
+## Includes
+###############################################################################
+##
+## It is possible to include the configuration or its parts from other files or
+## directories.
+
+include /etc/monit.d/*

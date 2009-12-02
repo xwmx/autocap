@@ -1,0 +1,10 @@
+# Rotate Rails application logs
+<%= shared_path %>/log/*.log {
+ daily
+ missingok
+ rotate 7
+ compress
+ delaycompress
+ notifempty
+ copytruncate
+}

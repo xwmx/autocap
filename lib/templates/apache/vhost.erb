@@ -1,0 +1,23 @@
+<VirtualHost *:80>
+   ServerName <%= domain %>
+   ServerAlias *.<%= domain %>
+   DocumentRoot <%= current_path %>/public
+   RailsEnv <%= rails_env %>
+   
+   # Deflate 
+   AddOutputFilterByType DEFLATE text/html text/xml text/plain text/css application/x-javascript text/javascript; 
+   BrowserMatch ^Mozilla/4 gzip-only-text/html 
+   BrowserMatch ^Mozilla/4\.0[678] no-gzip 
+   BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+   
+   # Asset Expiration
+   # ExpiresActive On
+   #<FilesMatch "\.(ico|gif|jpe?g|png|js|css)$">
+   #  ExpiresDefault "access plus 1 year"
+   #</FilesMatch>
+   # Using all except for css
+   ExpiresActive On
+   <FilesMatch "\.(ico|gif|jpe?g|png|js)$">
+     ExpiresDefault "access plus 1 year"
+   </FilesMatch>
+</VirtualHost>

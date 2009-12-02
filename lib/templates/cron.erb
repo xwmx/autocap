@@ -1,0 +1,14 @@
+# use /bin/bash to run commands, instead of the default /bin/sh
+SHELL=/bin/bash
+
+# start up mysql
+@reboot root mysqld_safe &
+
+# clear out any old mongrel pids
+@reboot root cd <%= shared_path %>/pids && rm -f mongrel*
+
+# start up the mongrel cluster
+@reboot deploy mongrel_rails cluster::start -C <%= current_path %>/config/mongrel_cluster.yml
+
+# Backup db + static @ 2am every 3 days, log the results to log/backup.log
+0 2 1-31/3  * * deploy cd <%= current_path %>; RAILS_ENV=production rake backup_fu:all >> <%= shared_path %>/log/backup.log
