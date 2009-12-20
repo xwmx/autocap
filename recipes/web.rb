@@ -26,7 +26,7 @@ namespace :deploy do
 
       reason = ENV['REASON']
       deadline = ENV['UNTIL']
-      rails_root = File.join(File.dirname(__FILE__), "..", "..", "..", "..")
+      rails_root = File.join(File.dirname(__FILE__), "..", "..", "..")
       template = if File.exist? File.join(File.dirname(__FILE__), rails_root, "app", "views", "maintenance", "maintenance.html.erb")
         File.read File.join(File.dirname(__FILE__), rails_root, "app", "views", "maintenance", "maintenance.html.erb")
       else
